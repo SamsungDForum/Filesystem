@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=1920"/>
+    <meta name="description" content="Tizen FileSystem API"/>
+    <title>Tizen FileSystem API</title>
+    <link rel="stylesheet" type="text/css" href="style.css"/>
+</head>
+<body>
+    <h1>Tizen FileSystem API</h1>
+
+    <div class="left">
+        <h2>Available buttons/actions:</h2>
+        <ul id="commands">
+            <li>0: clear logs</li>
+            <li>ENTER: open dir/show file info or contents</li>
+            <li>LEFT: back to storages list</li>
+        </ul>
+        <fieldset>
+            <legend>FileSystem elements list: <span id="path"></span></legend>
+            <ul id="dirtree"></ul>
+        </fieldset>
+        <fieldset>
+            <legend>Logs</legend>
+            <div class="logs" id="logs"></div>
+        </fieldset>
+    </div>
+
+    <div class="right">
+        <h2>Info</h2>
+        <p>This application presents a small fraction of what FileSystem API can do.</p>
+        <h2>File contents</h2>
+        <fieldset>
+            <legend>Selected file contents</legend>
+            <div id="contents"></div>
+        </fieldset>
+    </div>
+
+    <script type="text/javascript" src="tools.js"></script>
+    <script type="text/javascript" src="main.js"></script>
+</body>
+</html>
