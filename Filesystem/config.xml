@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<widget xmlns="http://www.w3.org/ns/widgets" xmlns:tizen="http://tizen.org/ns/widgets" id="http://yourdomain/Filesystem" version="0.2.1" viewmodes="maximized">
-    <tizen:application id="3vDSJrcC79.Filesystem" package="3vDSJrcC79" required_version="2.3"/>
+<widget xmlns:tizen="http://tizen.org/ns/widgets" xmlns="http://www.w3.org/ns/widgets" id="http://yourdomain/Filesystem" version="0.2.1" viewmodes="maximized">
+    <tizen:application id="lUNaJATrPE.Filesystem" package="lUNaJATrPE" required_version="2.3"/>
     <content src="index.html"/>
     <feature name="http://tizen.org/feature/screen.size.normal.1080.1920"/>
     <icon src="icon.png"/>
