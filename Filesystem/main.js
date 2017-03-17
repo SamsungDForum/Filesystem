@@ -1,262 +1,185 @@
-(function () {
+function handleKeydown(event) {
+	console.log('[TestApp] handleKeydown : ' + event.keyCode);
 
-    'use strict';
+	switch(event.keyCode) {
+		case 10009:
+			console.log('[TestApp] return');
+			tizen.application.getCurrentApplication().exit();
+			
+		break;
+        default:
 
-    var objectsCollection = {},
-            $logsEl = null,
-            $mainList = null,
-            $selected = null,
-            $contents = null,
-            $path = null,
-            topLevel = true;
+            break;
+	}
+}
 
-    /**
-     * Displays logging information on the screen and in the console.
-     * @param {string} msg - Message to log.
-     */
-    function log(msg) {
-        if (msg) {
-            // Update logs
-            console.log('[Filesystem]: ', msg);
-            $logsEl.innerHTML += msg + '<br />';
-        } else {
-            // Clear logs
-            $logsEl.innerHTML = '';
-        }
-
-        $logsEl.scrollTop = $logsEl.scrollHeight;
-    }
-
-    /**
-     * Register keys used in this application
-     */
-    function registerKeys() {
-        var usedKeys = ['0'];
-
-        usedKeys.forEach(
-                function (keyName) {
-                    tizen.tvinputdevice.registerKey(keyName);
-                }
-        );
-    }
+var result = '';
+var text = '';
+var documentsObj = '';
+var sampleDirObj = '';
+var sampleFileObj = '';
 
 
-    /**
-     * Handle input from remote
-     */
-    function registerKeyHandler() {
-        document.addEventListener(
-                'keydown', function (e) {
-                    switch (e.keyCode) {
-                        //key 0
-                        case 48:
-                            log();
-                            break;
-                        //key enter
-                        case 13:
-                            enterAction();
-                            break;
-                        //key up
-                        case 38:
-                            selectPrev();
-                            break;
-                        //key down
-                        case 40:
-                            selectNext();
-                            break;
-                        //key left
-                        case 37:
-                            directoryUp();
-                            break;
-                        //key return
-                        case 10009:
-                            tizen.application.getCurrentApplication().exit();
-                            break;
-                    }
-                }
-        );
-    }
+function test0() {
+	tizen.filesystem.resolve(
+		'documents',
+		function(obj) {
+			documentsObj = obj;
+			
+			text = 'tizen.filesystem.resolve documents Success : ' + JSON.stringify(documentsObj);
+   			log(text);
+		},
+		function(error) {
+			log(JSON.stringify(error));
+		},
+		'rw'
+	);
+}
 
-    /**
-     * Display application version
-     */
-    function displayVersion() {
-        var el = document.createElement('div');
-        el.id = 'version';
-        el.innerHTML = 'ver: ' + tizen.application.getAppInfo().version;
-        document.body.appendChild(el);
-    }
+function test1() {
+	if(documentsObj) {
+		var newDir = documentsObj.createDirectory('sampleDir');
 
-    /**
-     *
-     */
-    function enterAction() {
-        var elementName = $selected.innerText,
-                elementObject = null,
-                fileExt = null,
-                root = null,
-                uri = null,
-                img = null;
+		text = 'Directory is created in : ' + newDir.fullPath;
+		log(text);
+	}
+}
 
-        if (topLevel) {
-            // get virtual root's contents and list them
-            Tools.listRoot(
-                    elementName, function (files) {
-                        handleFileList(files, true);
-                    }
-            );
-            topLevel = false;
-            $path.innerText = elementName;
-        } else {
-            elementObject = objectsCollection[elementName];
-            if (elementObject.isDirectory) {
-                elementObject.listFiles(handleFileList);
-            } else {
-                fileExt = elementName.match(/\.([a-z]{3,})$/);
-                fileExt = (
-                                  fileExt
-                          ) ? fileExt.pop() : '';
-                root = elementObject.fullPath.split("/")[0];
-                switch (fileExt) {
-                    case 'js':
-                    case 'html':
-                    case 'xml':
-                    case 'txt':
-                        Tools.readFileAsText(
-                                root, elementName, function (contents) {
-                                    $contents.innerText = contents;
-                                }
-                        );
-                        break;
-                    case 'jpg':
-                    case 'png':
-                    case 'gif':
-                        uri = elementObject.toURI();
-                        img = new Image();
-                        img.src = uri;
-                        $contents.appendChild(img);
-                        break;
-                }
-                $path.innerText = elementObject.path;
-            }
-        }
-    }
+function test2() {
+	tizen.filesystem.resolve(
+		'documents/sampleDir',
+		function(obj) {
+			sampleDirObj = obj;
+			
+			text = 'tizen.filesystem.resolve documents/SampleDir Success : ' + JSON.stringify(sampleDirObj);
+   			log(text);
+		},
+		function(error) {
+			log(JSON.stringify(error));
+		},
+		'rw'
+	);	
+}
 
-    /**
-     * go one level up or show message that we're already at highest level
-     */
-    function directoryUp() {
-        displayStorages();
-    }
+function test3() {
+	if(sampleDirObj) {
+		var newDir = sampleDirObj.createFile('sampleFile.txt');
+			
+		text = 'File is created in : ' + newDir.fullPath;
+		log(text);
+	}
+}
 
+function test4() {
+	if(sampleDirObj) { 
+		sampleFileObj = sampleDirObj.resolve('sampleFile.txt');
+		
+		text = 'tizen.filesystem.resolve documents/sampleDir/sampleFile.txt Success : ' + JSON.stringify(sampleFileObj);;
+		log(text);
+	}
+}
 
-    function handleFileList(files, handleTopLevel) {
-        var i = 0, j = files.length, el = null;
+function test5() {
+	if(sampleFileObj) { 
+		sampleFileObj.openStream(
+			'a',
+			function(fileStream) {
+				fileStream.write('This is just sample test.');
+				
+				text = 'openStream write Success : This is just sample test.';
+				log(text);
+				
+				fileStream.close();
+			},
+			function(error) {
+				text = 'openStream Error : ' + JSON.stringify(error);
+		   		log(text);
+			}
+		);
+	}
+}
 
-        if (files.code) {
-            log('Error thrown: ' + files.message);
-            if (handleTopLevel) {
-                topLevel = true;
-            }
-            return;
-        }
+function test6() {
+	var contents;
 
-        objectsCollection = {};
+	if(sampleFileObj) { 
+		sampleFileObj.openStream(
+			'r',
+			function(fileStream) {
+				fileStream.position = 0;
+				contents = fileStream.read(fileStream.bytesAvailable);
+									
+				text = 'openStream read Success : ' + contents;
+				log(text);
 
-        if (!files.length) {
-            objectsCollection['<em>This folder is empty</em>'] = {"This folder is": "empty"};
-        } else {
-            for (i; i < j; i++) {
-                el = files[i];
-                if (el.name) {
-                    objectsCollection[el.name] = el;
-                } else if (el.label) {
-                    objectsCollection[el.label] = el;
-                }
-            }
-            $path.innerText = files[0].path;
-        }
-        Tools.inspectObj(
-                objectsCollection, $mainList, function () {
-                    select($mainList.firstElementChild);
-                }
-        );
-    }
+				fileStream.close();
+			},
+			function(error) {
+				text = 'openStream Error : ' + JSON.stringify(error);
+	   			log(text);
+			}
+		);
+	}
+}
 
-    /**
-     * @global $mainList
-     */
-    function displayStorages() {
-        Tools.listStorages(handleFileList);
-        $path.innerText = 'storages';
-        topLevel = true;
-    }
+function test7() {
+	if(sampleDirObj) {
+		sampleDirObj.deleteFile(
+			sampleDirObj.fullPath + '/sampleFile.txt',
+			function() {
+				text = 'deleteFile Success';
+				log(text);
+			},
+			function(error) {
+				text = 'deleteFile Error : ' + JSON.stringify(error);
+	   			log(text);
+			}
+		);
+	}
+}
 
-    function previewSelected(label) {
-        var elementToPreview = null,
-                propsToShow = undefined;
+function test8() {
+	if(documentsObj) {
+		documentsObj.deleteDirectory(
+			documentsObj.fullPath + '/sampleDir',
+			false,
+			function() {
+				text = 'deleteDirectory Success';
+				log(text);
+			},
+			function(error) {
+				text = 'deleteDirectory Error : ' + JSON.stringify(error);
+	   			log(text);
+			}
+		);
+	}
+}
 
-        elementToPreview = objectsCollection[label];
+function test9() {
+	if(documentsObj) {
+		documentsObj.listFiles(
+			function(files) {
+				text = 'listFiles Success : ' + JSON.stringify(files);
+	   			log(text);
+			},
+			function(error) {
+				text = 'listFiles Error : ' + JSON.stringify(error);
+	   			log(text);
+			}
+		);
+	}
+}
 
-        if (elementToPreview.path) {
-            propsToShow = ['isFile', 'isDirectory', 'fullPath', 'readOnly', 'length', 'fileSize', 'name'];
-        }
+function main() {
+	console.log('[TestApp] onload');
+}
 
-        try {
-            $contents.innerHTML = JSON.stringify(elementToPreview, propsToShow).slice(1, -1).replace(/,/g, "<br>\n");
-        } catch (e) {
-            console.error(e);
-        }
-    }
+function log(string) {
+	result = result + '<br>' + string;
+	document.getElementById('result').innerHTML = result;
+}
 
-    /**
-     *
-     */
-    function select(el) {
-        if ($selected) {
-            $selected.classList.remove('selected');
-        }
-        $selected = el;
-        $selected.classList.add('selected');
-        previewSelected($selected.innerText);
-        $selected.scrollIntoViewIfNeeded();
-    }
-
-    function selectNext() {
-        if ($selected.nextElementSibling) {
-            select($selected.nextElementSibling);
-        } else {
-            select($selected.parentElement.firstElementChild);
-        }
-    }
-
-    function selectPrev() {
-        if ($selected.previousElementSibling) {
-            select($selected.previousElementSibling);
-        } else {
-            select($selected.parentElement.lastElementChild);
-        }
-    }
-
-    /**
-     * Start the application once loading is finished
-     */
-    window.onload = function () {
-        $mainList = document.querySelector('#dirtree');
-        $logsEl = document.querySelector('#logs');
-        $contents = document.querySelector('#contents');
-        $path = document.querySelector('#path');
-
-        if (typeof window.tizen === "undefined") {
-            log('This application needs to be run on Tizen device');
-            return;
-        }
-
-        displayVersion();
-        registerKeys();
-        registerKeyHandler();
-        displayStorages();
-        Tools.setLogger(log);
-        Tools.listen(displayStorages);
-    }
-})();
+function logClear() {
+	result = '';
+	document.getElementById('result').innerHTML = '';
+}
