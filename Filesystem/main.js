@@ -7,9 +7,9 @@ function handleKeydown(event) {
 			tizen.application.getCurrentApplication().exit();
 			
 		break;
-        default:
+		default:
 
-            break;
+			break;
 	}
 }
 
@@ -27,7 +27,7 @@ function test0() {
 			documentsObj = obj;
 			
 			text = 'tizen.filesystem.resolve documents Success : ' + JSON.stringify(documentsObj);
-   			log(text);
+			log(text);
 		},
 		function(error) {
 			log(JSON.stringify(error));
@@ -52,7 +52,7 @@ function test2() {
 			sampleDirObj = obj;
 			
 			text = 'tizen.filesystem.resolve documents/SampleDir Success : ' + JSON.stringify(sampleDirObj);
-   			log(text);
+			log(text);
 		},
 		function(error) {
 			log(JSON.stringify(error));
@@ -93,7 +93,7 @@ function test5() {
 			},
 			function(error) {
 				text = 'openStream Error : ' + JSON.stringify(error);
-		   		log(text);
+				log(text);
 			}
 		);
 	}
@@ -116,7 +116,7 @@ function test6() {
 			},
 			function(error) {
 				text = 'openStream Error : ' + JSON.stringify(error);
-	   			log(text);
+				log(text);
 			}
 		);
 	}
@@ -132,7 +132,7 @@ function test7() {
 			},
 			function(error) {
 				text = 'deleteFile Error : ' + JSON.stringify(error);
-	   			log(text);
+				log(text);
 			}
 		);
 	}
@@ -149,7 +149,7 @@ function test8() {
 			},
 			function(error) {
 				text = 'deleteDirectory Error : ' + JSON.stringify(error);
-	   			log(text);
+				log(text);
 			}
 		);
 	}
@@ -160,11 +160,11 @@ function test9() {
 		documentsObj.listFiles(
 			function(files) {
 				text = 'listFiles Success : ' + JSON.stringify(files);
-	   			log(text);
+				log(text);
 			},
 			function(error) {
 				text = 'listFiles Error : ' + JSON.stringify(error);
-	   			log(text);
+				log(text);
 			}
 		);
 	}
